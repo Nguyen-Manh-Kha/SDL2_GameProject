@@ -1,3 +1,9 @@
+Explaining game idea:
+  - You are a normal forest ranger but one day, the fire suddenly breaks out in the forest and you have no other choice but to become a fire-fighter to save the forest
+  - You are equipped with a small water tank and water gun to put out fire
+    + The water animation will be built by using particle effect
+    + After a certain amount of time of spraying water, you will have to get to a point ( a lake / a well ? ) to recharge
+  - The trees, the burning effect and how the fire spreads (on progress and will be updated)
 11/3/2025:
   - Create moving background with 2 background images in a loop ( background.cpp file )
     + The main idea of the code is using a term called " Parallax scrolling "
