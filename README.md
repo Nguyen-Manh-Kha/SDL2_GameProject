@@ -10,3 +10,4 @@
       + Tool used to design character model: https://www.piskelapp.com/
       + 2 character sprites ( will be more in the future) are located in "Character" folder
   - Render character with transparent background on the moving background (Using color keying)
+  - Make a small change to "background.cpp" code otherwise the character would move like Michael Jackson in the game
