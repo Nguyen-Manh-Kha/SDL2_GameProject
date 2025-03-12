@@ -55,6 +55,4 @@ void moving_background(int left,int &bg1_position_x, int &bg2_position_x, SDL_Re
     window_rect.x = bg2_position_x;
     SDL_RenderCopy(renderer, background2, NULL, &window_rect);
 
-    SDL_RenderPresent(renderer);
-    SDL_Delay(10);
 }
