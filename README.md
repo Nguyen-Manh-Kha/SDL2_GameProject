@@ -1,8 +1,9 @@
 Explaining game idea:
   - You are a normal forest ranger but one day, the fire suddenly breaks out in the forest and you have no other choice but to become a fire-fighter to save the forest
-  - You are equipped with a small water tank and water gun to put out fire
+  - You are equipped with a small water tank to keep water and a water gun to put out fire
     + The water animation will be built by using particle effect
     + After a certain amount of time of spraying water, you will have to get to a point ( a lake / a well ? ) to recharge
+  - Thanks to the advance of technology, you are also equipped with a protective suit that can protect you from the fire, the suit along with the heavy water tank means that you cannot jump, but you are completely fire-proof, but the trees aren't, so you better save them before they burn down
   - The trees, the burning effect and how the fire spreads (on progress and will be updated)
     
 11/3/2025:
@@ -21,3 +22,9 @@ Explaining game idea:
   - Render character with transparent background on the moving background (Using color keying)
   - Add another function to function.cpp: load_texture_with_transparent_background()
   - Make a small change to "background.cpp" code otherwise the character would move like Michael Jackson in the game
+
+14/3/2025:
+  - Finish designing all 12 character moving sprites
+    + There are 4 main movement: left + up ; right + up ; left ; right
+    + Each movement has 3 moving sprites
+  - Finish the character moving animation
