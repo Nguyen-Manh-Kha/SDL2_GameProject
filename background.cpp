@@ -4,9 +4,10 @@
 #include <iostream>
 
 
-void moving_background(int left,int &bg1_position_x, int &bg2_position_x, SDL_Renderer* renderer, SDL_Texture* background1, SDL_Texture* background2, const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
+void moving_background(int left,double &bg1_position_x, double &bg2_position_x, SDL_Renderer* renderer, SDL_Texture* background1, SDL_Texture* background2, const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
 {
-    const int BG_MOVING_SPEED = 5;
+    SDL_RenderClear(renderer);
+    const double BG_MOVING_SPEED = 5;
     if(left == 1)
     {
     /// update new background images position
@@ -47,7 +48,7 @@ void moving_background(int left,int &bg1_position_x, int &bg2_position_x, SDL_Re
     window_rect.w = WINDOW_WIDTH;
     window_rect.h = WINDOW_HEIGHT;
 
-    SDL_RenderClear(renderer);
+    
     // render image 1
     SDL_RenderCopy(renderer, background1, NULL, &window_rect);
     
