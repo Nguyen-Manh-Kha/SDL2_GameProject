@@ -2,6 +2,7 @@
 
 #include "function.h"
 #include "background.h"
+#include "particlesystem.h"
 
 #include <iostream>
 #include <SDL.h>
@@ -53,6 +54,15 @@ int main(int argc, char* argv[])
     double bg1_position_x = 0; // start position of background image 1
     double bg2_position_x = WINDOW_WIDTH; // start position of background image 2
 
+    SDL_Rect background_rect;
+    background_rect.y = 0;
+    background_rect.w = WINDOW_WIDTH;
+    background_rect.h = WINDOW_HEIGHT;
+
+/// particle setup
+    particle_system P;
+    double particle_x, particle_y, particle_angle;
+
 /// character setup
     basic_character_left[1] = load_texture_with_transparent_background(renderer, "Character/basic_character_left/Basic_Character_Left_1.png");
     basic_character_left[2] = load_texture_with_transparent_background(renderer, "Character/basic_character_left/Basic_Character_Left_2.png");
@@ -67,11 +77,15 @@ int main(int argc, char* argv[])
     up_character_right[2] = load_texture_with_transparent_background(renderer, "Character/up_character_right/Up_Character_Right_2.png");
     up_character_right[3] = load_texture_with_transparent_background(renderer, "Character/up_character_right/Up_Character_Right_3.png");
 
+    bool move_left = false;
+    bool move_right = false;
+    bool move_up = false;
+
     int frame_num = 1;
 
-    const SDL_Rect character_position_rect = {572, 488, 256, 288};
+    const SDL_Rect character_rect = {572, 488, 256, 288};
 
-    // control character sprites framerate independently
+    // control character frame-rate independently
     Uint32 last_frame_time = SDL_GetTicks();
     const int CHARACTER_ANIMATION_DELAY = 200;
 
@@ -98,41 +112,76 @@ int main(int argc, char* argv[])
             }
         }
 
-        // control character framerate independently
-        Uint32 current_time = SDL_GetTicks();
-        if(current_time - last_frame_time > CHARACTER_ANIMATION_DELAY)
-        {
-            frame_num++;
-            if(frame_num > 3) frame_num = 1;
-            last_frame_time = current_time;
-        }
-
         // handle key press
         if(key_press[SDLK_LEFT] && key_press[SDLK_UP])
         {
-            moving_background(0, bg1_position_x, bg2_position_x, renderer, background1, background2, WINDOW_WIDTH, WINDOW_HEIGHT);
-            SDL_RenderCopy(renderer, up_character_left[frame_num], NULL, &character_position_rect);
+            moving_background(0, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
+            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            move_left = true; move_up = true; move_right = false;
+            particle_x = 640;
+            particle_y = 565;
+            particle_angle = 120;
         }
 
         else if(key_press[SDLK_RIGHT] && key_press[SDLK_UP])
         {
-            moving_background(1, bg1_position_x, bg2_position_x, renderer, background1, background2, WINDOW_WIDTH, WINDOW_HEIGHT);
-            SDL_RenderCopy(renderer, up_character_right[frame_num], NULL, &character_position_rect);
+            moving_background(1, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
+            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            move_right = true; move_up = true; move_left = false;
+            particle_x = 758;
+            particle_y = 565;
+            particle_angle = 60;
         }
 
         else if(key_press[SDLK_LEFT])
         {
-            moving_background(0, bg1_position_x, bg2_position_x, renderer, background1, background2, WINDOW_WIDTH, WINDOW_HEIGHT);
-            SDL_RenderCopy(renderer, basic_character_left[frame_num], NULL, &character_position_rect);
+            moving_background(0, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
+            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            move_left = true; move_up = false; move_right = false;
+            particle_x = 630;
+            particle_y = 635;
+            particle_angle = 180;
         }
 
         else if(key_press[SDLK_RIGHT])
         {
-            moving_background(1, bg1_position_x, bg2_position_x, renderer, background1, background2, WINDOW_WIDTH, WINDOW_HEIGHT);
-            SDL_RenderCopy(renderer, basic_character_right[frame_num], NULL, &character_position_rect);
+            moving_background(1, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
+            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            move_right = true; move_up = false; move_left = false;
+            particle_x = 767;
+            particle_y = 635;
+            particle_angle = 0;
         }
 
-        // render
+        if(key_press[SDLK_a])
+        {
+            P.add_particle(particle_x, particle_y, particle_angle);
+        }
+
+/// render everything
+    //  clear
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+    // render background
+        background_rect.x = bg1_position_x;
+        SDL_RenderCopy(renderer, background1, NULL, &background_rect);
+        background_rect.x = bg2_position_x;
+        SDL_RenderCopy(renderer, background2, NULL, &background_rect);
+    
+    // render water shooting
+    P.render_particle(renderer);
+
+    // render character
+        if(move_up)
+        {
+            if(move_left) SDL_RenderCopy(renderer, up_character_left[frame_num], NULL, &character_rect);
+            else if(move_right) SDL_RenderCopy(renderer, up_character_right[frame_num], NULL, &character_rect);
+        }
+        else if(move_left) SDL_RenderCopy(renderer, basic_character_left[frame_num], NULL, &character_rect);
+        else SDL_RenderCopy(renderer, basic_character_right[frame_num], NULL, &character_rect);
+
+    // present
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
@@ -142,7 +191,13 @@ int main(int argc, char* argv[])
     SDL_DestroyWindow(window);
     SDL_DestroyTexture(background1);
     SDL_DestroyTexture(background2);
-
+    for(int i = 1; i <= 3; i++)
+    {
+        SDL_DestroyTexture(basic_character_left[i]);
+        SDL_DestroyTexture(basic_character_right[i]);
+        SDL_DestroyTexture(up_character_left[i]);
+        SDL_DestroyTexture(up_character_right[i]);
+    }
     SDL_Quit();
     IMG_Quit();
     return 0;
