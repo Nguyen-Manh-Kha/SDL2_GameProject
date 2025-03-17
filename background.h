@@ -5,6 +5,6 @@
 #include <SDL_image.h>
 #include <iostream>
 
-void moving_background(int, double&, double&, SDL_Renderer*, SDL_Texture*, SDL_Texture*, const int, const int);
+void moving_background(int, double&, double&, const int, const int);
 
 #endif
