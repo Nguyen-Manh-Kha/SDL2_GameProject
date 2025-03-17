@@ -28,3 +28,12 @@ Explaining game idea:
     + There are 4 main movement: left + up ; right + up ; left ; right
     + Each movement has 3 moving sprites
   - Finish the character moving animation
+
+17/3/2025:
+  - Finish water spraying animation using particle effect
+    + The particle system is a vector consists of multiple particles
+    + Each particle has its own size, color (mostly blue), speed, shooting angle, lifetime using rand()
+    + Pressing KEY_A adds more particles to the particle system
+    + Every frame, the particle system will check every single particle, update its position, check whether it's dead or not and remove dead ones, and render all the particles that sill exist
+  - Make some small adjustments to other source files to adapt to new features
+  - Add "update_character_frame" function to function.cpp file to control character frame independently using Uint32 GetTicks() otherwise the character sprites would change too fast 
