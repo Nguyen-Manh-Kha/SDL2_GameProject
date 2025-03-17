@@ -48,3 +48,14 @@ SDL_Texture* load_texture_with_transparent_background(SDL_Renderer* renderer, co
     SDL_FreeSurface(surface);
     return texture;
 }
+
+void update_character_frame(Uint32 &last_frame_time, int &frame_num, const int CHARACTER_ANIMATION_DELAY)
+{
+    Uint32 current_time = SDL_GetTicks();
+    if(current_time - last_frame_time > CHARACTER_ANIMATION_DELAY)
+    {
+        frame_num++;
+        if(frame_num > 3) frame_num = 1;
+        last_frame_time = current_time;
+    }
+}
