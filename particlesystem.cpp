@@ -17,7 +17,7 @@ particle::particle(double _x, double _y, double _angle)
     angle = _angle;
     speed = rand() % 3 + 11;
     lifetime = rand() % 21 + 30;
-    particle_size = 4;
+    particle_size = rand() % 3 + 3;
 }
 
 void particle::update_position()
@@ -30,7 +30,7 @@ void particle::update_position()
 void particle::render(SDL_Renderer* renderer)
 {
     SDL_Rect particle_rect = {static_cast<int> (x), static_cast<int> (y), particle_size, particle_size};
-    SDL_SetRenderDrawColor(renderer, 0, 102, 204 ,255); // blue
+    SDL_SetRenderDrawColor(renderer, rand() % 61, rand() % 61 + 52, rand() % 61 + 154 ,255);
     SDL_RenderFillRect(renderer, &particle_rect);
 }
 
