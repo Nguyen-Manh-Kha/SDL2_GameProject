@@ -32,7 +32,7 @@ Explaining game idea:
 
 17/3/2025:
   - Finish water spraying animation using particle effect
-    + The particle system is a vector consists of multiple particles
+    + The particle system is a vector that consists of multiple particles
     + Each particle has its own size, color (mostly blue), speed, shooting angle, lifetime using rand()
     + Pressing KEY_A adds more particles to the particle system
     + Every frame, the particle system will check every single particle, update its position, check whether it's dead or not and remove dead ones, and render all the particles that sill exist
@@ -43,6 +43,6 @@ Explaining game idea:
     + "Tile map method" learning video: https://youtu.be/DNu8yUsxOnE?si=KisWBHMKdNmM_aYb
     + There is a total of 18 different tree models
     + Each tree has its own size, shape and location
-    + The forest system is a vector consist of all tree objects
+    + The forest system is a vector that consist of all tree objects
     + Whenever the character moves, the forest system will update all trees position and render them
   - Working on bushes system, fire burning and spreading and burnt dead trees mechanism
