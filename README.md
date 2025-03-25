@@ -40,6 +40,7 @@ Explaining game idea:
 
 25/3/2025:
   - Create a forest system using tile map method
+    + "Tile map method" learning video: https://youtu.be/DNu8yUsxOnE?si=KisWBHMKdNmM_aYb
     + There is a total of 18 different tree models
     + Each tree has its own size, shape and location
     + The forest system is a vector consist of all tree objects
