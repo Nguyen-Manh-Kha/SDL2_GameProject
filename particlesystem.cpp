@@ -56,7 +56,7 @@ void particle_system::add_particle(double X, double Y, double ANGLE)
 
 void particle_system::render_particle(SDL_Renderer* renderer)
 {
-    for(int i = 0; i < (int)v.size(); i++)
+    for(int i = (int)v.size() - 1; i >= 0; i--)
     {
         v[i].update_position();
         if(v[i].is_dead())
@@ -66,7 +66,6 @@ void particle_system::render_particle(SDL_Renderer* renderer)
         else v[i].render(renderer);
     }
 }
-
 
 
 
