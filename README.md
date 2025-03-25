@@ -37,3 +37,11 @@ Explaining game idea:
     + Pressing KEY_A adds more particles to the particle system
     + Every frame, the particle system will check every single particle, update its position, check whether it's dead or not and remove dead ones, and render all the particles that sill exist
   - Make some small adjustments to other source files to adapt to new features
+
+25/3/2025:
+  - Create a forest system using tile map method
+    + There is a total of 18 different tree models
+    + Each tree has its own size, shape and location
+    + The forest system is a vector consist of all tree objects
+    + Whenever the character moves, the forest system will update all trees position and render them
+  - Working on bushes system, fire burning and spreading and burnt dead trees mechanism
