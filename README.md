@@ -46,3 +46,16 @@ Explaining game idea:
     + The forest system is a vector that consist of all tree objects
     + Whenever the character moves, the forest system will update all trees position and render them
   - Working on bushes system, fire burning and spreading and burnt dead trees mechanism
+
+31/3/2025:
+  - Basically finish the forest system
+    + There are a total of 18 different tree models in "Trees" file and 7 bush models in "Bush" file
+    + The source of the tree and bush models: https://www.shutterstock.com/vi/image-vector/pixel-forest-jungle-trees-shrub-grass-2290404331
+  - Add the flame system to the forest system
+    + Class flame: each flame has its own location ( SDL Point ), burning state (using probability, the testing video is 100% burning, this is changeable depending on the final version of the game) and health
+    + The source of the flame sprites: https://www.vecteezy.com/vector-art/23844301-fire-flame-pixel-art-animation-sprite-frames-8bit
+    + Each tree, each bush has its own flame system which is a vector that consists of all flames and their state
+    + Add a mechanism to the particle system: Every frame, the particle system will check if there is any particle that hits the hitbox of the flame, that particle will disappear and the health of the flame will decrease, the flame will also disappear if its health = 0
+    + Every frame, the flame system will check every flame and render all the flame that still exist
+    + Working on the speading mechanism of the flame ( the flame will spread to other flame points in the same tree/ bush and to the tree/ bush nearby )
+    + Working on the trees/bushes' health and the burned dead tree/ bush sprites
