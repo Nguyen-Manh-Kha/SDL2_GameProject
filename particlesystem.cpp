@@ -27,6 +27,7 @@ void particle::update_position()
     lifetime--;
 }
 
+
 void particle::render(SDL_Renderer* renderer)
 {
     SDL_Rect particle_rect = {static_cast<int> (x), static_cast<int> (y), particle_size, particle_size};
@@ -38,6 +39,31 @@ bool particle::is_dead()
 {
     if(y >= 715) return true;
     return lifetime <= 0;
+}
+
+void particle::check_collision_flame(treesystem &forest, bushsystem &bushes)
+{
+    for(int i = 0; i < (int)forest.tree_system.size(); i++) if(forest.tree_system[i].onscreen())
+    {
+        for(int j = 0; j < (int)forest.tree_system[i].flame_points.size(); j++)
+        {
+            if(forest.tree_system[i].flame_points[j].check_collision_water(x, y))
+            {
+                lifetime = 0;
+            }
+        }
+    }
+
+    for(int i = 0; i < (int)bushes.bush_system.size(); i++) if(bushes.bush_system[i].onscreen())
+    {
+        for(int j = 0; j < (int)bushes.bush_system[i].flame_points.size(); j++)
+        {
+            if(bushes.bush_system[i].flame_points[j].check_collision_water(x, y))
+            {
+                lifetime = 0;
+            }
+        }
+    }
 }
 
 
@@ -54,11 +80,12 @@ void particle_system::add_particle(double X, double Y, double ANGLE)
     }
 }
 
-void particle_system::render_particle(SDL_Renderer* renderer)
+void particle_system::render_particle(SDL_Renderer* renderer, treesystem &forest, bushsystem &bushes)
 {
     for(int i = (int)v.size() - 1; i >= 0; i--)
     {
         v[i].update_position();
+        v[i].check_collision_flame(forest, bushes);
         if(v[i].is_dead())
         {
             v.erase(v.begin() + i);
