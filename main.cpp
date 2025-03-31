@@ -20,7 +20,12 @@ SDL_Texture* basic_character_left[4]; // 3 basic_left_moving_sprites
 SDL_Texture* up_character_left[4]; // 3 up_left_moving_sprites
 SDL_Texture* basic_character_right[4]; // 3 basic_left_moving_sprites
 SDL_Texture* up_character_right[4]; // 3 up_right_moving_sprites
-SDL_Texture* tree_texture[19];
+SDL_Texture* tree_texture[19]; // 18 tree models
+SDL_Texture* bush_texture[8]; // 7 bush models
+SDL_Texture* flame_img[9]; // 8 flame sprites
+SDL_Texture* barrier[2]; // 2 barrier prites
+SDL_Texture* house;
+SDL_Texture* well;
 
 const int WINDOW_WIDTH = 1400;
 const int WINDOW_HEIGHT = 750;
@@ -61,7 +66,19 @@ int main(int argc, char* argv[])
     background_rect.w = WINDOW_WIDTH;
     background_rect.h = WINDOW_HEIGHT;
 
+    ///// map barrier and house setup
+    barrier[0] = NULL;
+    barrier[1] = load_texture(renderer, "barrier/sign_left.png");
+    barrier[2] = load_texture(renderer, "barrier/sign_right.png");
+    SDL_Rect barrier_rect = {0, 507, 177, 216};
+
+    house = load_texture(renderer, "house/house.png");
+    well = load_texture(renderer, "house/well.png");
+    SDL_Rect house_rect = {500, 101, 816, 622};
+    SDL_Rect well_rect = {200, 547, 212, 176};
+
     ///// forest setup
+    // trees
     tree_texture[0] = NULL;
     tree_texture[1] = load_texture(renderer, "Trees/tree_1.png");
     tree_texture[2] = load_texture(renderer, "Trees/tree_2.png");
@@ -84,6 +101,30 @@ int main(int argc, char* argv[])
 
     treesystem forest;
     forest.setup_tree(tree_texture);
+
+    // bushes
+    bush_texture[0] = NULL;
+    bush_texture[1] = load_texture(renderer, "Bush/bush_1.png");
+    bush_texture[2] = load_texture(renderer, "Bush/bush_2.png");
+    bush_texture[3] = load_texture(renderer, "Bush/bush_3.png");
+    bush_texture[4] = load_texture(renderer, "Bush/bush_4.png");
+    bush_texture[5] = load_texture(renderer, "Bush/bush_5.png");
+    bush_texture[6] = load_texture(renderer, "Bush/bush_6.png");
+    bush_texture[7] = load_texture(renderer, "Bush/bush_7.png");
+
+    bushsystem bushes;
+    bushes.setup_bush(bush_texture);
+
+    ///// flame sprites setup
+    flame_img[0] = NULL;
+    flame_img[1] = load_texture_with_transparent_background(renderer, "flame/flame1.png", 8, 8, 8);
+    flame_img[2] = load_texture_with_transparent_background(renderer, "flame/flame2.png", 8, 8, 8);
+    flame_img[3] = load_texture_with_transparent_background(renderer, "flame/flame3.png", 8, 8, 8);
+    flame_img[4] = load_texture_with_transparent_background(renderer, "flame/flame4.png", 8, 8, 8);
+    flame_img[5] = load_texture_with_transparent_background(renderer, "flame/flame5.png", 8, 8, 8);
+    flame_img[6] = load_texture_with_transparent_background(renderer, "flame/flame6.png", 8, 8, 8);
+    flame_img[7] = load_texture_with_transparent_background(renderer, "flame/flame7.png", 8, 8, 8);
+    flame_img[8] = load_texture_with_transparent_background(renderer, "flame/flame8.png", 8, 8, 8);
 
     ///// particle setup
     particle_system P;
@@ -141,13 +182,14 @@ int main(int argc, char* argv[])
             }
         }
 
-        // handle key press
+    ///// handle key press
         if(key_press[SDL_SCANCODE_LEFT] && key_press[SDL_SCANCODE_UP])
         {
             moving_background(0, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
             update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_left = true; move_up = true; move_right = false;
             forest.update_forest(move_left);
+            bushes.update_bushes(move_left);
             particle_x = 667;
             particle_y = 604;
             particle_angle = 120;
@@ -159,6 +201,7 @@ int main(int argc, char* argv[])
             update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_right = true; move_up = true; move_left = false;
             forest.update_forest(move_left);
+            bushes.update_bushes(move_left);
             particle_x = 756;
             particle_y = 608;
             particle_angle = 60;
@@ -170,6 +213,7 @@ int main(int argc, char* argv[])
             update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_left = true; move_up = false; move_right = false;
             forest.update_forest(move_left);
+            bushes.update_bushes(move_left);
             particle_x = 659;
             particle_y = 655;
             particle_angle = 180;
@@ -181,6 +225,7 @@ int main(int argc, char* argv[])
             update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_right = true; move_up = false; move_left = false;
             forest.update_forest(move_left);
+            bushes.update_bushes(move_left);
             particle_x = 760;
             particle_y = 656;
             particle_angle = 0;
@@ -203,10 +248,14 @@ int main(int argc, char* argv[])
         SDL_RenderCopy(renderer, background2, NULL, &background_rect);
     
     // render tree_system
-        forest.render_forest(renderer);
+        forest.render_forest(renderer, flame_img);
+        bushes.render_bushes(renderer, flame_img);
+
+    // render barrier
+        
 
     // render water shooting
-        P.render_particle(renderer);
+        P.render_particle(renderer, forest, bushes);
 
     // render character
         if(move_up)
@@ -237,6 +286,10 @@ int main(int argc, char* argv[])
     for(int i = 1; i <= 18; i++)
     {
         SDL_DestroyTexture(tree_texture[i]);
+    }
+    for(int i = 1; i <= 8; i++)
+    {
+        SDL_DestroyTexture(flame_img[i]);
     }
     SDL_Quit();
     IMG_Quit();
