@@ -1,4 +1,5 @@
 #include "particlesystem.h"
+#include "home.h"
 
 #include <iostream>
 #include <SDL.h>
@@ -16,7 +17,7 @@ particle::particle(double _x, double _y, double _angle)
     y = _y;
     angle = _angle;
     speed = rand() % 3 + 11;
-    lifetime = rand() % 21 + 30;
+    lifetime = rand() % 21 + 40;
     particle_size = rand() % 3 + 3;
 }
 
@@ -41,7 +42,7 @@ bool particle::is_dead()
     return lifetime <= 0;
 }
 
-void particle::check_collision_flame(treesystem &forest, bushsystem &bushes)
+void particle::check_collision_flame(treesystem &forest, bushsystem &bushes, house &House, well &Well)
 {
     for(int i = 0; i < (int)forest.tree_system.size(); i++) if(forest.tree_system[i].onscreen())
     {
@@ -49,7 +50,7 @@ void particle::check_collision_flame(treesystem &forest, bushsystem &bushes)
         {
             if(forest.tree_system[i].flame_points[j].check_collision_water(x, y))
             {
-                lifetime = 0;
+                if(rand() % 100 <= 79)lifetime = 0;
             }
         }
     }
@@ -60,11 +61,35 @@ void particle::check_collision_flame(treesystem &forest, bushsystem &bushes)
         {
             if(bushes.bush_system[i].flame_points[j].check_collision_water(x, y))
             {
-                lifetime = 0;
+                if(rand() % 100 <= 79)lifetime = 0;
+            }
+        }
+    }
+
+    if(House.onscreen())
+    {
+        for(int i = 0; i < (int)House.flame_points.size(); i++)
+        {
+            if(House.flame_points[i].check_collision_water(x, y))
+            {
+                if(rand() % 100 <= 79)lifetime = 0;
+            }
+        }
+    }
+
+    if(Well.onscreen())
+    {
+        for(int i = 0; i < (int)Well.flame_points.size(); i++)
+        {
+            if(Well.flame_points[i].check_collision_water(x, y))
+            {
+                if(rand() % 100 <= 79)lifetime = 0;
             }
         }
     }
 }
+
+
 
 
 
@@ -80,12 +105,12 @@ void particle_system::add_particle(double X, double Y, double ANGLE)
     }
 }
 
-void particle_system::render_particle(SDL_Renderer* renderer, treesystem &forest, bushsystem &bushes)
+void particle_system::render_particle(SDL_Renderer* renderer, treesystem &forest, bushsystem &bushes, house &House, well &Well)
 {
     for(int i = (int)v.size() - 1; i >= 0; i--)
     {
         v[i].update_position();
-        v[i].check_collision_flame(forest, bushes);
+        v[i].check_collision_flame(forest, bushes, House, Well);
         if(v[i].is_dead())
         {
             v.erase(v.begin() + i);
