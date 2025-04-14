@@ -58,4 +58,19 @@ Explaining game idea:
     + Add a mechanism to the particle system: Every frame, the particle system will check if there is any particle that hits the hitbox of the flame, that particle will disappear and the health of the flame will decrease, the flame will also disappear if its health = 0
     + Every frame, the flame system will check every flame and render all the flame that still exist
     + Working on the speading mechanism of the flame ( the flame will spread to other flame points in the same tree/ bush and to the tree/ bush nearby )
-    + Working on the trees/bushes' health and the burned dead tree/ bush sprites
+    + Working on the trees/bushes' health and burned dead tree/ bush sprites
+
+14/4/2025:
+  - Add fire spreading mechanism:
+    + The fire can spread betweens nearby flame points depending on the distance between them
+    + If a flame point is not burning, only when there is at least 1 burning flame point nearby and only after a certain "spreading time" could the "not burning flame point" ignite
+    + The more burning flame points nearby, the faster the "not burning flame point" ignites
+    + The fire can spread betweens flame points in the same tree or the same bush, or betweens flame points of different nearby trees or bushes
+  - Add another game content: besides putting out the fire to save the trees, player also has to also protect the wooden house and the well from being destroyed by the fire
+    + Create class house and well in "home.cpp" file
+    + The house and the well also have flame points, now the fire can spread between trees, bushesand and also house and well
+    + Now you also lose the game if the house or the well is destroyed by the fire
+  - Working on trees/bushes health and burned dead tree/ bush sprites
+  - Working on player health bar and water bar
+    + Player can also catch fire and lose health if the fire is too close
+    + After a certain time of shooting water, player has to come back to the well to refill the water tank
