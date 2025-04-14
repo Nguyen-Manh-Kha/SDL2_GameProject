@@ -2,6 +2,7 @@
 #define PARTICLESYSTEM_H
 
 #include "treesystem.h"
+#include "home.h"
 
 #include <iostream>
 #include <SDL.h>
@@ -25,7 +26,7 @@ class particle
         void update_position();
         void render(SDL_Renderer* renderer);
         bool is_dead();
-        void check_collision_flame(treesystem &forest, bushsystem &bushes);
+        void check_collision_flame(treesystem &forest, bushsystem &bushes, house &House, well &Well);
 };
 
 class particle_system
@@ -34,7 +35,7 @@ class particle_system
         vector<particle> v;
     public:
         void add_particle(double X, double Y, double ANGLE);
-        void render_particle(SDL_Renderer* renderer, treesystem &forest, bushsystem &bushes);
+        void render_particle(SDL_Renderer* renderer, treesystem &forest, bushsystem &bushes, house &House, well &Well);
 };
 
 #endif
