@@ -8,6 +8,7 @@
 #include <SDL_image.h>
 #include <vector>
 #include <stdlib.h>
+#include <math.h>
 
 using namespace std;
 
@@ -15,11 +16,16 @@ class flame
 {
     private:
         SDL_Point point;
+        int w, h;
         bool burning;
         int health;
+        int spread_time;
     public: 
-        flame(SDL_Point _point);
+        flame(SDL_Point _point, int percentage);
+        bool be_burning();
+        void sudden_flame();
         void update_flame(bool move_left);
+        void receive_flame(flame other);
         void render_flame(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
         bool check_collision_water(int X, int Y);
 };
@@ -38,7 +44,7 @@ class tree
         void update_position(bool move_left);
         void setup_flame_points();
         void render_flame_tree(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
-        bool onscreen(); 
+        bool onscreen();
 };
 
 class treesystem
@@ -50,7 +56,10 @@ class treesystem
         vector <tree> tree_system;
         void setup_tree(SDL_Texture* tree_texture[]);
         void update_forest(bool move_left);
+        void spread_flame_forest();
         void render_forest(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
+        int tree_near_house;
+        int give_tree_near_house_num();
 };
 
 class bush
@@ -78,7 +87,10 @@ class bushsystem
         vector <bush> bush_system;
         void setup_bush(SDL_Texture* bush_texture[]);
         void update_bushes(bool move_left);
+        void spread_flame_bushes();
         void render_bushes(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
+        int bush_near_house;
+        int give_bush_near_house_num();
 };
 
 #endif
