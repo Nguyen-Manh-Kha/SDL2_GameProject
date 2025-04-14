@@ -4,6 +4,7 @@
 #include "background.h"
 #include "particlesystem.h"
 #include "treesystem.h"
+#include "home.h"
 
 #include <iostream>
 #include <SDL.h>
@@ -24,8 +25,8 @@ SDL_Texture* tree_texture[19]; // 18 tree models
 SDL_Texture* bush_texture[8]; // 7 bush models
 SDL_Texture* flame_img[9]; // 8 flame sprites
 SDL_Texture* barrier[2]; // 2 barrier prites
-SDL_Texture* house;
-SDL_Texture* well;
+SDL_Texture* house_img;
+SDL_Texture* well_img;
 
 const int WINDOW_WIDTH = 1400;
 const int WINDOW_HEIGHT = 750;
@@ -66,16 +67,19 @@ int main(int argc, char* argv[])
     background_rect.w = WINDOW_WIDTH;
     background_rect.h = WINDOW_HEIGHT;
 
-    ///// map barrier and house setup
+    ///// map barrier and home setup
     barrier[0] = NULL;
     barrier[1] = load_texture(renderer, "barrier/sign_left.png");
     barrier[2] = load_texture(renderer, "barrier/sign_right.png");
     SDL_Rect barrier_rect = {0, 507, 177, 216};
 
-    house = load_texture(renderer, "house/house.png");
-    well = load_texture(renderer, "house/well.png");
-    SDL_Rect house_rect = {500, 101, 816, 622};
-    SDL_Rect well_rect = {200, 547, 212, 176};
+    house_img = load_texture(renderer, "house/house.png");
+    house House(house_img);
+    House.set_up_flame_points();
+    
+    well_img = load_texture(renderer, "house/well.png");
+    well Well(well_img);
+    Well.set_up_flame_points();
 
     ///// forest setup
     // trees
@@ -153,9 +157,12 @@ int main(int argc, char* argv[])
     const SDL_Rect character_rect = {618, 547, 192, 216};
 
     // control character frame-rate independently
-    Uint32 last_frame_time = SDL_GetTicks();
+    Uint32 last_character_time = SDL_GetTicks();
     const int CHARACTER_ANIMATION_DELAY = 200;
- 
+    
+    // control fire spread time
+    Uint32 last_fire_time = SDL_GetTicks();
+
     // key state
     key_press[512] = {false};
 
@@ -182,53 +189,71 @@ int main(int argc, char* argv[])
             }
         }
 
+        Uint32 current_frame_time = SDL_GetTicks();
+        if(current_frame_time - last_fire_time >= 200)
+        {
+            forest.spread_flame_forest();
+            bushes.spread_flame_bushes();
+            House.spread_flame_house(forest, bushes);
+            Well.spread_flame_well(bushes);
+            last_fire_time = current_frame_time;
+        }
+
     ///// handle key press
         if(key_press[SDL_SCANCODE_LEFT] && key_press[SDL_SCANCODE_UP])
         {
             moving_background(0, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
-            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_left = true; move_up = true; move_right = false;
             forest.update_forest(move_left);
             bushes.update_bushes(move_left);
+            House.update_position(move_left);
+            Well.update_position(move_left);
             particle_x = 667;
             particle_y = 604;
-            particle_angle = 120;
+            particle_angle = 115;
         }
 
         else if(key_press[SDL_SCANCODE_RIGHT] && key_press[SDL_SCANCODE_UP])
         {
             moving_background(1, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
-            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_right = true; move_up = true; move_left = false;
             forest.update_forest(move_left);
             bushes.update_bushes(move_left);
+            House.update_position(move_left);
+            Well.update_position(move_left);
             particle_x = 756;
             particle_y = 608;
-            particle_angle = 60;
+            particle_angle = 65;
         }
 
-        else if(key_press[SDL_SCANCODE_LEFT] && key_press[SDL_SCANCODE_UP] == false)
+        if(key_press[SDL_SCANCODE_LEFT])
         {
             moving_background(0, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
-            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_left = true; move_up = false; move_right = false;
             forest.update_forest(move_left);
             bushes.update_bushes(move_left);
+            House.update_position(move_left);
+            Well.update_position(move_left);
             particle_x = 659;
             particle_y = 655;
-            particle_angle = 180;
+            particle_angle = 170;
         }
 
-        else if(key_press[SDL_SCANCODE_RIGHT] && key_press[SDL_SCANCODE_UP] == false)
+        else if(key_press[SDL_SCANCODE_RIGHT])
         {
             moving_background(1, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
-            update_character_frame(last_frame_time, frame_num, CHARACTER_ANIMATION_DELAY);
+            update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
             move_right = true; move_up = false; move_left = false;
             forest.update_forest(move_left);
             bushes.update_bushes(move_left);
+            House.update_position(move_left);
+            Well.update_position(move_left);
             particle_x = 760;
             particle_y = 656;
-            particle_angle = 0;
+            particle_angle = 10;
         }
 
         if(key_press[SDL_SCANCODE_A])
@@ -247,15 +272,18 @@ int main(int argc, char* argv[])
         background_rect.x = bg2_position_x;
         SDL_RenderCopy(renderer, background2, NULL, &background_rect);
     
+    // render home
+        House.render_house(renderer, flame_img);
+    
     // render tree_system
         forest.render_forest(renderer, flame_img);
         bushes.render_bushes(renderer, flame_img);
 
-    // render barrier
-        
+    // render well and barrier
+        Well.render_well(renderer, flame_img);
 
     // render water shooting
-        P.render_particle(renderer, forest, bushes);
+        P.render_particle(renderer, forest, bushes, House, Well);
 
     // render character
         if(move_up)
@@ -276,20 +304,23 @@ int main(int argc, char* argv[])
     SDL_DestroyWindow(window);
     SDL_DestroyTexture(background1);
     SDL_DestroyTexture(background2);
-    for(int i = 1; i <= 3; i++)
-    {
-        SDL_DestroyTexture(basic_character_left[i]);
-        SDL_DestroyTexture(basic_character_right[i]);
-        SDL_DestroyTexture(up_character_left[i]);
-        SDL_DestroyTexture(up_character_right[i]);
-    }
+    SDL_DestroyTexture(house_img);
+    SDL_DestroyTexture(well_img);
     for(int i = 1; i <= 18; i++)
     {
         SDL_DestroyTexture(tree_texture[i]);
-    }
-    for(int i = 1; i <= 8; i++)
-    {
-        SDL_DestroyTexture(flame_img[i]);
+        if(i <= 8) SDL_DestroyTexture(flame_img[i]);
+        if(i <= 3)
+        {
+            SDL_DestroyTexture(basic_character_left[i]);
+            SDL_DestroyTexture(basic_character_right[i]);
+            SDL_DestroyTexture(up_character_left[i]);
+            SDL_DestroyTexture(up_character_right[i]);
+        }
+        if(i <= 2)
+        {
+            SDL_DestroyTexture(barrier[i]);
+        }
     }
     SDL_Quit();
     IMG_Quit();
