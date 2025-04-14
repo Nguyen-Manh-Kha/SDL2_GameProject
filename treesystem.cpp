@@ -6,23 +6,39 @@
 #include <SDL_image.h>
 #include <vector>
 #include <stdlib.h>
+#include <math.h>
 
 using namespace std;
 
-flame::flame(SDL_Point _point)
+flame::flame(SDL_Point _point, int percentage)
 {
     point.x = _point.x;
     point.y = _point.y;
-    if(rand() % 100 <= 99) // 30 percents
+    int tmp = 85 + rand() % 31;
+    w = 105 * tmp / 100;
+    h = 200 * tmp / 100;
+    if(rand() % 100 <= percentage) // 30 percents
     {
         burning = true; 
-        health = 1000;
+        health = 1000 * tmp / 100;
     }
     else
     {
         burning = false;
         health = 0;
     }
+    spread_time = 0;
+}
+
+bool flame::be_burning()
+{
+    return burning;
+}
+
+void flame::sudden_flame()
+{
+    burning = true;
+    health = 1000;
 }
 
 void flame::update_flame(bool move_left)
@@ -31,18 +47,35 @@ void flame::update_flame(bool move_left)
     else point.x -= 5;
 }
 
+void flame::receive_flame(flame other)
+{
+    if(other.burning)
+    {
+        double dx = (double) (other.point.x - point.x);
+        double dy = (double) (other.point.x - point.x);
+        double distance = sqrt(pow(dx, 2) + pow(dy, 2));
+        if(distance <= 150) spread_time++;
+    }
+    if(spread_time >= 50)
+    {
+        burning = true;
+        health = 1000;
+        spread_time = 0;
+    }
+}
+
 void flame::render_flame(SDL_Renderer* renderer, SDL_Texture* flame_img[])
 {
     if(burning)
     {
-        SDL_Rect rect = {point.x, point.y, 105, 200};
+        SDL_Rect rect = {point.x, point.y, w, h};
         SDL_RenderCopy(renderer, flame_img[1 + rand() % 8], NULL, &rect);
     }
 }
 
 bool flame::check_collision_water(int X, int Y)
 {
-    if(burning == true && point.x + 20 <= X && X <= point.x + 75 && point.y + 10 <= Y && Y <= point.y + 190)
+    if(burning == true && point.x + 20 <= X && X <= point.x + w - 20 && point.y + 10 <= Y && Y <= point.y + h - 10)
     {
         health--;
         if(health <= 0) burning = false;
@@ -50,7 +83,6 @@ bool flame::check_collision_water(int X, int Y)
     }
     return false;
 }
-
 
 
 
@@ -106,7 +138,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 90 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 40; else point.y = y + 80 + rand() % 80;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -116,7 +148,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 130 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 20; else point.y = y + 40 + rand() % 40;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -126,7 +158,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 116 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 37; else point.y = y + 80 + rand() % 85;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -136,7 +168,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 106 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 40; else point.y = y + 90 + rand() % 90;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -146,7 +178,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 125 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 32; else point.y = y + 65 + rand() % 65;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -158,7 +190,7 @@ void tree::setup_flame_points()
             if(i % 3 == 1) point.y = y + 160 + rand() % 80;
             else if(i % 3 == 0) point.y = y + 80 + rand() % 80;
             else point.y = y + rand() % 30;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -168,7 +200,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 120 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 40; else point.y = y + 125 + rand() % 125;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -180,7 +212,7 @@ void tree::setup_flame_points()
             if(i % 3 == 1) point.y = y+ rand() % 30;
             else if(i % 3 == 0) point.y = y + 150 + rand() % 75;
             else point.y = y + 75 + rand() % 75;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -190,7 +222,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 90 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 30; else point.y = y + 90 + rand() % 90;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -203,7 +235,7 @@ void tree::setup_flame_points()
             else if(i % 4 == 2) point.y = y + rand() % 30;
             else if(i % 4 == 3) point.y = y + 150 + rand() % 60;
             else point.y = y + 75 + rand() % 60;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -213,7 +245,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 80 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 30; else point.y = y + 75 + rand() % 75;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -226,7 +258,7 @@ void tree::setup_flame_points()
             else if(i % 4 == 2) point.y = y + rand() % 30;
             else if(i % 4 == 3) point.y = y + 180 + rand() % 75;
             else point.y = y + 90 + rand() % 75;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -238,7 +270,7 @@ void tree::setup_flame_points()
             if(i % 3 == 1) point.y = y+ rand() % 30;
             else if(i % 3 == 2) point.y = y + 186 + rand() % 80;
             else point.y = y + 93 + rand() % 80;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -250,7 +282,7 @@ void tree::setup_flame_points()
             if(i % 3 == 1) point.y = y+ rand() % 30;
             else if(i % 3 == 2) point.y = y + 192 + rand() % 90;
             else point.y = y + 96 + rand() % 90;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -260,7 +292,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 90 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 30; else point.y = y + 110 + rand() % 110;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -270,7 +302,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 80 * (i - 1) + rand() % 30, y};
             if(i % 2 == 1) point.y = y + rand() % 30; else point.y = y + 72 + rand() % 72;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -280,7 +312,7 @@ void tree::setup_flame_points()
         {
             SDL_Point point = {x + 85 * (i - 1) + rand() % 30, y};
             if(i % 2 == 0) point.y = y + rand() % 30; else point.y = y + 135 + rand() % 135;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -293,7 +325,7 @@ void tree::setup_flame_points()
             else if(i % 4 == 2) point.y = y + rand() % 30;
             else if(i % 4 == 3) point.y = y + 150 + rand() % 65;
             else point.y = y + 75 + rand() % 65;
-            flame tmp(point);
+            flame tmp(point,29);
             flame_points.push_back(tmp);
         }
     }
@@ -320,8 +352,19 @@ bool tree::onscreen()
 void treesystem::setup_tree(SDL_Texture* tree_texture[])
 {
     int num = -12600;
+    bool home = false;
     while(num <= 14000)
     {
+        if(num >= -200 && home == false)
+        {
+            tree tree_tmp6(6, num, 59, 736, 664);
+            tree_tmp6.load_tree(tree_texture, 6);
+            tree_tmp6.setup_flame_points();
+            tree_system.push_back(tree_tmp6);
+            num = 1100;
+            home = true;
+            tree_near_house = (int)tree_system.size();
+        }
         int tmp = 1 + rand() % 18;
         if(tmp == 1)
         {
@@ -452,11 +495,34 @@ void treesystem::setup_tree(SDL_Texture* tree_texture[])
     }
 }
 
+int treesystem::give_tree_near_house_num()
+{
+    return tree_near_house;
+}
+
 void treesystem::update_forest(bool move_left)
 {
     for(int i = 0;  i < (int)tree_system.size(); i++)
     {
         tree_system[i].update_position(move_left);
+    }
+}
+
+void treesystem::spread_flame_forest()
+{
+    for(int i = 0; i < (int)tree_system.size(); i++)
+    {
+        for(int j = 0; j < (int)tree_system[i].flame_points.size(); j++) if(tree_system[i].flame_points[j].be_burning() == false)
+        {
+            if(rand() % 10000 == 1808) tree_system[i].flame_points[j].sudden_flame(); 
+            else for(int I = i - 1; I <= i + 1; I++)
+            {
+                for(int J = 0; J < (int)tree_system[I].flame_points.size(); J++)
+                {
+                    tree_system[i].flame_points[j].receive_flame(tree_system[I].flame_points[J]);
+                }
+            }
+        }
     }
 }
 
@@ -487,7 +553,7 @@ void treesystem::render_forest(SDL_Renderer* renderer, SDL_Texture* flame_img[])
 bush::bush(int &num, int _y, int _w, int _h)
 {
     x = num + rand() % 101;
-    num += _w * 3 / 4;
+    num += _w *2 / 3;
     y = _y;
     w = _w;
     h = _h;
@@ -531,8 +597,8 @@ void bush::setup_flame_bush()
     if(type == 4 || type == 6 || type == 7) flame_num = 2; else flame_num = 3;
     for(int i = 1; i <= flame_num; i++)
     {
-        SDL_Point point = {x + w / flame_num * (i - 1) + rand() % 30, y - 100 + rand() % 30};
-        flame tmp(point);
+        SDL_Point point = {x + w / flame_num * (i - 1) + rand() % 30, y - 110 + rand() % 30};
+        flame tmp(point,29);
         flame_points.push_back(tmp);
     }
 }
@@ -558,8 +624,15 @@ bool bush::onscreen()
 void bushsystem:: setup_bush(SDL_Texture* bush_texture[])
 {
     int num = -12600;
+    bool house = false;
     while(num <= 14000)
     {
+        if(num >= 350 && house == false)
+        {
+            num = 1100;
+            bush_near_house = bush_system.size();
+            house = true;
+        }
         int tmp = 1 + rand() % 7;
         if(tmp == 1)
         {
@@ -613,11 +686,34 @@ void bushsystem:: setup_bush(SDL_Texture* bush_texture[])
     }
 }
 
+int bushsystem::give_bush_near_house_num()
+{
+    return bush_near_house;
+}
+
 void bushsystem::update_bushes(bool move_left)
 {
     for(int i = 0;  i < (int)bush_system.size(); i++)
     {
         bush_system[i].update_position(move_left);
+    }
+}
+
+void bushsystem::spread_flame_bushes()
+{
+    for(int i = 0; i < (int)bush_system.size(); i++)
+    {
+        for(int j = 0; j < (int)bush_system[i].flame_points.size(); j++) if(bush_system[i].flame_points[j].be_burning() == false)
+        {
+            if(rand() % 10000 == 1808) bush_system[i].flame_points[j].sudden_flame();
+            else for(int I = i - 1; I <= i + 1; I++)
+            {
+                for(int J = 0; J < (int)bush_system[I].flame_points.size(); J++)
+                {
+                    bush_system[i].flame_points[j].receive_flame(bush_system[I].flame_points[J]);
+                }
+            }
+        }
     }
 }
 
