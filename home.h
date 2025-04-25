@@ -24,6 +24,7 @@ class house
         void set_up_flame_points();
         void update_position(bool move_left);
         void spread_flame_house(treesystem &forest, bushsystem &bushes);
+        bool lose_health();
         void render_house(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
 };
 
@@ -40,7 +41,9 @@ class well
         void set_up_flame_points();
         void update_position(bool move_left);
         void spread_flame_well(bushsystem &bushes);
+        bool lose_health();
         void render_well(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
+        bool near_character();
 };
 
 #endif
