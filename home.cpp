@@ -102,6 +102,16 @@ void house::spread_flame_house(treesystem &forest, bushsystem &bushes)
     }
 }
 
+bool house::lose_health()
+{
+    for(int i = 0; i < (int)flame_points.size(); i++) if(flame_points[i].be_burning())
+    {
+        health -= 1;
+    }
+    if(health <= 0) return true;
+    return false;
+}
+
 void house::render_house(SDL_Renderer* renderer, SDL_Texture* flame_img[])
 {
     if(onscreen());
@@ -123,7 +133,7 @@ well::well(SDL_Texture* _image)
     rect.y = 547;
     rect.w = 212;
     rect.h = 176;
-    health = 500;
+    health = 5000;
     image = _image;
 }
 
@@ -167,6 +177,16 @@ void well::spread_flame_well(bushsystem &bushes)
     }
 }
 
+bool well::lose_health()
+{
+    for(int i = 0; i < (int)flame_points.size(); i++) if(flame_points[i].be_burning())
+    {
+        health -= 1;
+    }
+    if(health <= 0) return true;
+    return false;
+}
+
 void well::render_well(SDL_Renderer* renderer, SDL_Texture* flame_img[])
 {
     if(onscreen());
@@ -177,4 +197,9 @@ void well::render_well(SDL_Renderer* renderer, SDL_Texture* flame_img[])
             flame_points[i].render_flame(renderer, flame_img);
         }
     }
+}
+
+bool well::near_character()
+{
+    return (rect.x >= 550 && rect.x <= 650);
 }
