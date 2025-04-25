@@ -74,3 +74,22 @@ Explaining game idea:
   - Working on player health bar and water bar
     + Player can also catch fire and lose health if the fire is too close
     + After a certain time of shooting water, player has to come back to the well to refill the water tank
+
+26/4/2025: Basically finish the game
+  - Create 18 burnt tree models and 7 burnt bush models based on 18 "living" tree models and 7 "livinng" bush models using https://www.piskelapp.com/
+  - Add map barrier to the game
+  - Add health system to trees, bushes, house and well
+    + When the tree/bush's health drops to 0, its texture will become "burnt texture" and all the flame points of that tree/bush will disappear(which means that that burnt tree/bush can no longer catch fire and burn)
+  - Add a character status system
+    + The character status system consists of health status and water level status
+    + Health status show how much health your character has
+    + Water level status show how much water your character has in the water tank
+    + When you shoot water, the water level will drop
+    + To refill your water, you have to come back to the well and hold 'R' key to refill water
+    + The character now can also catch fire if you stands too close to fire for a certain amount of time
+    + When the character is on fire, the fire will eventually disappear after a few seconds thanks to the protective suit, but you will lose some health and some water as a penalty
+    - There are totally 4 win-lose scenarios:
+      (1) You only win if you put out all the fire and you save atleast 1 tree/bush
+      (2) You lose if your character'health drops to 0
+      (3) You lose if the fire destroys your house or your well
+      (4) You lose if the fire destroy all trees and bushes
