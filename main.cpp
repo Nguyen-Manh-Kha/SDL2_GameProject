@@ -269,7 +269,7 @@ int main(int argc, char* argv[])
             }
             if(forest.win(survive_tree) && bushes.win(survive_bush))
             {
-                int percentage = (survive_tree + survive_bush) / (forest.tree_system.size() + bushes.bush_system.size());
+                int percentage = (survive_tree + survive_bush) * 100 / (forest.tree_system.size() + bushes.bush_system.size());
                 cout << "You win" << endl << "You saved " << percentage << '%' << " of the forest";
             }
             last_fire_time = current_frame_time;
