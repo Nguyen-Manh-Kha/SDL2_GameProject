@@ -32,7 +32,9 @@ SDL_Texture* house_img;
 SDL_Texture* well_img;
 SDL_Texture* heart;
 SDL_Texture* water;
-SDL_Texture* menu;
+SDL_Texture* start_menu;
+SDL_Texture* instructions[3];
+SDL_Texture* ending[6];
 
 const int WINDOW_WIDTH = 1400;
 const int WINDOW_HEIGHT = 750;
@@ -62,6 +64,20 @@ int main(int argc, char* argv[])
         return 0;
     }
 
+    ///// Menu setup
+    start_menu = load_texture(renderer, "Menu/Menu.png");
+    instructions[0] = NULL;
+    instructions[1] = load_texture(renderer, "Menu/instruction_1.png");
+    instructions[2] = load_texture(renderer, "Menu/instruction_2.png");
+    ending[0] = NULL;
+    ending[1] = load_texture(renderer, "Menu/good_ending.png");
+    ending[2] = load_texture(renderer, "Menu/character_dead.png");
+    ending[3] = load_texture(renderer, "Menu/fire_destroy_forest.png");
+    ending[4] = load_texture(renderer, "Menu/fire_destroy_house.png");
+    ending[5] = load_texture(renderer, "Menu/fire_destroy_well.png");
+    
+    SDL_Rect window_rect = {0, 0, 1400, 750};
+    
     ///// background setup
     background1 = load_texture(renderer, "background/background1.png");
     background2 = load_texture(renderer, "background/background2.png");
@@ -214,6 +230,13 @@ int main(int argc, char* argv[])
     bool run = true;
     SDL_Event e;
 
+    bool menu_check = true;
+    bool instruction_check = false;
+    int instruction_num = 1;
+    bool run_game = false;
+    bool ending_check = false;
+    int ending_num = 0;
+
     while(run)
     {
         while(SDL_PollEvent(&e) != 0)
@@ -223,160 +246,315 @@ int main(int argc, char* argv[])
                 run = false;
             }
             
-            if(e.type == SDL_KEYDOWN)
+            if(menu_check)
             {
-                key_press[e.key.keysym.scancode] = true;
+                if(e.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    if(e.button.button == SDL_BUTTON_LEFT)
+                    {
+                        int mouse_x, mouse_y;
+                        SDL_GetMouseState(&mouse_x, &mouse_y);
+                        if(mouse_x >= 575 && mouse_x <= 810 && mouse_y >= 355 && mouse_y <= 455)
+                        {
+                            menu_check = false;
+                            instruction_check = false;
+                            run_game = true;
+                            ending_check = false;
+                        }
+
+                        if(mouse_x >= 575 && mouse_x <= 810 && mouse_y >= 505 && mouse_y <= 605)
+                        {
+                            menu_check = false;
+                            instruction_check = true;
+                            instruction_num = 1;
+                            run_game = false;
+                            ending_check = false;
+                        }
+                    }
+                }
             }
 
-            if(e.type == SDL_KEYUP)
+            if(instruction_check)
             {
-                key_press[e.key.keysym.scancode] = false;
+                if(e.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    if(e.button.button == SDL_BUTTON_LEFT)
+                    {
+                        int mouse_x, mouse_y;
+                        SDL_GetMouseState(&mouse_x, &mouse_y);
+                        if(mouse_x >= 330 && mouse_x <= 580 && mouse_y >= 620 && mouse_y <= 720)
+                        {
+                            menu_check = true;
+                            instruction_check = false;
+                            instruction_num = 1;
+                            run_game = false;
+                            ending_check = false;
+                        }
+
+                        if(mouse_x >= 865 && mouse_x <= 1115 && mouse_y >= 620 && mouse_y <= 720)
+                        {
+                            menu_check = false;
+                            instruction_check = true;
+                            if(instruction_num == 1) instruction_num = 2;
+                            else instruction_num = 1;
+                            run_game = false;
+                            ending_check = false;
+                        }
+                    }
+                }
+            }
+
+            if(run_game)
+            {
+                if(e.type == SDL_KEYDOWN)
+                {
+                    key_press[e.key.keysym.scancode] = true;
+                }
+
+                if(e.type == SDL_KEYUP)
+                {
+                    key_press[e.key.keysym.scancode] = false;
+                }
+            }
+
+            if(ending_check)
+            {
+                if(e.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    if(e.button.button == SDL_BUTTON_LEFT)
+                    {
+                        int mouse_x, mouse_y;
+                        SDL_GetMouseState(&mouse_x, &mouse_y);
+                        if(mouse_x >= 280 && mouse_x <= 620 && mouse_y >= 470 && mouse_y <= 610)
+                        {
+                            character_status.reset();
+                            P.reset();
+                            House.reset();
+                            Well.reset();
+                            forest.reset();
+                            forest.setup_tree(tree_texture, burnt_tree_texture);
+                            bushes.reset();
+                            bushes.setup_bush(bush_texture, burnt_bush_texture);
+                            barrier_rect.x = -13000;
+
+                            menu_check = false;
+                            instruction_check = false;
+                            run_game = true;
+                            ending_check = false;
+                        }
+
+                        if(mouse_x >= 815 && mouse_x <= 1155 && mouse_y >= 470 && mouse_y <= 610)
+                        {
+                            character_status.reset();
+                            P.reset();
+                            House.reset();
+                            Well.reset();
+                            forest.reset();
+                            forest.setup_tree(tree_texture, burnt_tree_texture);
+                            bushes.reset();
+                            bushes.setup_bush(bush_texture, burnt_bush_texture);
+                            barrier_rect.x = -13000;
+                            
+                            menu_check = true;
+                            instruction_check = false;
+                            run_game = false;
+                            ending_check = false;
+                        }
+                    }
+                }
             }
         }
 
-        Uint32 current_frame_time = SDL_GetTicks();
-        if(current_frame_time - last_fire_time >= 200)
+        if(run_game)
         {
-            forest.spread_flame_forest();
-            forest.health_tree();
+            Uint32 current_frame_time = SDL_GetTicks();
+            if(current_frame_time - last_fire_time >= 200)
+            {
+                forest.spread_flame_forest();
+                forest.health_tree();
             
-            bushes.spread_flame_bushes();
-            bushes.health_bush();
+                bushes.spread_flame_bushes();
+                bushes.health_bush();
             
-            House.spread_flame_house(forest, bushes);
+                House.spread_flame_house(forest, bushes);
+                Well.spread_flame_well(bushes);
 
-            character_status.catch_fire(forest, bushes);
-            character_status.on_fire();
+                character_status.catch_fire(forest, bushes);
+                character_status.on_fire();
 
-            if(House.lose_health())
-            {
-                cout << "You lose" << endl << "The fire destroyed your house";
-                run = false;
+                if(House.lose_health())
+                {
+                    menu_check = false;
+                    instruction_check = false;
+                    run_game = false;
+                    ending_check = true;
+                    ending_num = 4;
+                }
+
+                else if(Well.lose_health())
+                {
+                    menu_check = false;
+                    instruction_check = false;
+                    run_game = false;
+                    ending_check = true;
+                    ending_num = 5;
+                }
+
+                else if(character_status.lose())
+                {
+                    menu_check = false;
+                    instruction_check = false;
+                    run_game = false;
+                    ending_check = true;
+                    ending_num = 2;
+                }
+
+                else if(forest.lose() && bushes.lose())
+                {
+                    menu_check = false;
+                    instruction_check = false;
+                    run_game = false;
+                    ending_check = true;
+                    ending_num = 3;
+                }
+
+                else if(forest.win(survive_tree) && bushes.win(survive_bush))
+                {
+                    int percentage = (survive_tree + survive_bush) * 100 / (forest.tree_system.size() + bushes.bush_system.size());
+                    menu_check = false;
+                    instruction_check = false;
+                    run_game = false;
+                    ending_check = true;
+                    if(percentage >= 30) ending_num = 1;
+                    else ending_num = 3;
+                }
+                last_fire_time = current_frame_time;
             }
-            Well.spread_flame_well(bushes);
-            if(Well.lose_health())
+
+        ///// handle key press
+            if(key_press[SDL_SCANCODE_LEFT] && barrier_rect.x <= 400)
             {
-                cout << "You lose" << endl << "The fire destroyed the well";
-                run = false;
+                moving_background(0, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
+                update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
+                move_left = true; move_up = false; move_right = false;
+                forest.update_forest(move_left);
+                bushes.update_bushes(move_left);
+                House.update_position(move_left);
+                Well.update_position(move_left);
+                barrier_rect.x += 5;
+                particle_x = 659;
+                particle_y = 655;
+                particle_angle = 170;
             }
-            if(forest.lose() && bushes.lose())
+
+            else if(key_press[SDL_SCANCODE_RIGHT] && barrier_rect.x >= -27100)
             {
-                cout << "You lose" << endl << "The fire destroyed the forest";
+                moving_background(1, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
+                update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
+                move_right = true; move_up = false; move_left = false;
+                forest.update_forest(move_left);
+                bushes.update_bushes(move_left);
+                House.update_position(move_left);
+                Well.update_position(move_left);
+                barrier_rect.x -= 5;
+                particle_x = 760;
+                particle_y = 656;
+                particle_angle = 10;
             }
-            if(character_status.lose())
+
+            if(move_left && key_press[SDL_SCANCODE_UP])
             {
-                cout << "You lose" << endl << "You lost all your health. Beware of the fire";
+                move_left = true; move_right = false; move_up = true;
+                particle_x = 667;
+                particle_y = 604;
+                particle_angle = 115;
             }
-            if(forest.win(survive_tree) && bushes.win(survive_bush))
+
+            else if(move_right && key_press[SDL_SCANCODE_UP])
             {
-                int percentage = (survive_tree + survive_bush) * 100 / (forest.tree_system.size() + bushes.bush_system.size());
-                cout << "You win" << endl << "You saved " << percentage << '%' << " of the forest";
+                move_left = false; move_right = true; move_up = true;
+                particle_x = 756;
+                particle_y = 608;
+                particle_angle = 65;
             }
-            last_fire_time = current_frame_time;
-        }
 
-    ///// handle key press
-        if(key_press[SDL_SCANCODE_LEFT] && barrier_rect.x <= 400)
-        {
-            moving_background(0, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
-            update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
-            move_left = true; move_up = false; move_right = false;
-            forest.update_forest(move_left);
-            bushes.update_bushes(move_left);
-            House.update_position(move_left);
-            Well.update_position(move_left);
-            barrier_rect.x += 5;
-            particle_x = 659;
-            particle_y = 655;
-            particle_angle = 170;
-        }
-
-        else if(key_press[SDL_SCANCODE_RIGHT] && barrier_rect.x >= -27100)
-        {
-            moving_background(1, bg1_position_x, bg2_position_x, WINDOW_WIDTH, WINDOW_HEIGHT);
-            update_character_frame(last_character_time, frame_num, CHARACTER_ANIMATION_DELAY);
-            move_right = true; move_up = false; move_left = false;
-            forest.update_forest(move_left);
-            bushes.update_bushes(move_left);
-            House.update_position(move_left);
-            Well.update_position(move_left);
-            barrier_rect.x -= 5;
-            particle_x = 760;
-            particle_y = 656;
-            particle_angle = 10;
-        }
-
-        if(move_left && key_press[SDL_SCANCODE_UP])
-        {
-            move_left = true; move_right = false; move_up = true;
-            particle_x = 667;
-            particle_y = 604;
-            particle_angle = 115;
-        }
-
-        else if(move_right && key_press[SDL_SCANCODE_UP])
-        {
-            move_left = false; move_right = true; move_up = true;
-            particle_x = 756;
-            particle_y = 608;
-            particle_angle = 65;
-        }
-
-        if(key_press[SDL_SCANCODE_A] && character_status.not_empty_water())
-        {
-            P.add_particle(particle_x, particle_y, particle_angle);
-            key_press[SDL_SCANCODE_R] = false;
-            character_status.lose_water();
-        }
+            if(key_press[SDL_SCANCODE_A] && character_status.not_empty_water())
+            {
+                P.add_particle(particle_x, particle_y, particle_angle);
+                key_press[SDL_SCANCODE_R] = false;
+                character_status.lose_water();
+            }
         
-        if(key_press[SDL_SCANCODE_R] && character_status.not_full_water() && Well.near_character())
-        {
-            key_press[SDL_SCANCODE_A] = false;
-            character_status.refill_water();
+            if(key_press[SDL_SCANCODE_R] && character_status.not_full_water() && Well.near_character())
+            {
+                key_press[SDL_SCANCODE_A] = false;
+                character_status.refill_water();
+            }
         }
 
     ///// render everything
-    //  clear
+        //  clear
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-    // render background
-        background_rect.x = bg1_position_x;
-        SDL_RenderCopy(renderer, background1, NULL, &background_rect);
-        background_rect.x = bg2_position_x;
-        SDL_RenderCopy(renderer, background2, NULL, &background_rect);
-    
-    // render map barrier
-        SDL_RenderCopy(renderer, barrier[1], NULL, &barrier_rect);
-        barrier_rect.x += 28000;
-        SDL_RenderCopy(renderer, barrier[2], NULL, &barrier_rect);
-        barrier_rect.x -= 28000;
-
-    // render home
-        House.render_house(renderer, flame_img);
-    
-    // render tree_system
-        forest.render_forest(renderer, flame_img);
-        bushes.render_bushes(renderer, flame_img);
-
-    // render well and barrier
-        Well.render_well(renderer, flame_img);
-
-    // render water shooting
-        P.render_particle(renderer, forest, bushes, House, Well);
-
-    // render character
-        if(move_up)
+        if(menu_check)
         {
-            if(move_left) SDL_RenderCopy(renderer, up_character_left[frame_num], NULL, &character_rect);
-            else if(move_right) SDL_RenderCopy(renderer, up_character_right[frame_num], NULL, &character_rect);
+            SDL_RenderCopy(renderer, background1, NULL, &window_rect);
+            SDL_RenderCopy(renderer, start_menu, NULL, &window_rect);
         }
-        else if(move_left) SDL_RenderCopy(renderer, basic_character_left[frame_num], NULL, &character_rect);
-        else SDL_RenderCopy(renderer, basic_character_right[frame_num], NULL, &character_rect);
 
-        character_status.render(renderer, flame_img);
+        if(instruction_check)
+        {
+            SDL_RenderCopy(renderer, background1, NULL, &window_rect);
+            SDL_RenderCopy(renderer, instructions[instruction_num], NULL, &window_rect);
+        }
 
-    // present
+        if(run_game)
+        {
+            // render background
+            background_rect.x = bg1_position_x;
+            SDL_RenderCopy(renderer, background1, NULL, &background_rect);
+            background_rect.x = bg2_position_x;
+            SDL_RenderCopy(renderer, background2, NULL, &background_rect);
+        
+            // render map barrier
+            SDL_RenderCopy(renderer, barrier[1], NULL, &barrier_rect);
+            barrier_rect.x += 28000;
+            SDL_RenderCopy(renderer, barrier[2], NULL, &barrier_rect);
+            barrier_rect.x -= 28000;
+
+            // render home
+            House.render_house(renderer, flame_img);
+        
+            // render tree_system
+            forest.render_forest(renderer, flame_img);
+            bushes.render_bushes(renderer, flame_img);
+
+            // render well and barrier
+            Well.render_well(renderer, flame_img);
+
+            // render water shooting
+            P.render_particle(renderer, forest, bushes, House, Well);
+
+            // render character
+            if(move_up)
+            {
+                if(move_left) SDL_RenderCopy(renderer, up_character_left[frame_num], NULL, &character_rect);
+                else if(move_right) SDL_RenderCopy(renderer, up_character_right[frame_num], NULL, &character_rect);
+            }
+            else if(move_left) SDL_RenderCopy(renderer, basic_character_left[frame_num], NULL, &character_rect);
+            else SDL_RenderCopy(renderer, basic_character_right[frame_num], NULL, &character_rect);
+
+            character_status.render(renderer, flame_img);
+        }
+
+        if(ending_check)
+        {
+            SDL_RenderCopy(renderer, background1, NULL, &window_rect);
+            SDL_RenderCopy(renderer, ending[ending_num], NULL, &window_rect);
+        }
+
+        // present
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
@@ -384,19 +562,29 @@ int main(int argc, char* argv[])
     ///// Quit SDL
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_DestroyTexture(start_menu);
     SDL_DestroyTexture(background1);
     SDL_DestroyTexture(background2);
     SDL_DestroyTexture(house_img);
     SDL_DestroyTexture(well_img);
+    SDL_DestroyTexture(heart);
+    SDL_DestroyTexture(water);
     for(int i = 1; i <= 18; i++)
     {
         SDL_DestroyTexture(tree_texture[i]);
         SDL_DestroyTexture(burnt_bush_texture[i]);
-        if(i <= 8) SDL_DestroyTexture(flame_img[i]);
+        if(i <= 8)
+        {
+            SDL_DestroyTexture(flame_img[i]);
+        }
         if(i <= 7)
         {
             SDL_DestroyTexture(bush_texture[i]);
             SDL_DestroyTexture(burnt_bush_texture[i]);
+        }
+        if(i <= 5)
+        {
+            SDL_DestroyTexture(ending[i]);
         }
         if(i <= 3)
         {
@@ -408,6 +596,7 @@ int main(int argc, char* argv[])
         if(i <= 2)
         {
             SDL_DestroyTexture(barrier[i]);
+            SDL_DestroyTexture(instructions[i]);
         }
     }
     SDL_Quit();
