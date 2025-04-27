@@ -1,5 +1,11 @@
 Source code and game explain: https://drive.google.com/file/d/142EJHM-Ginjbtvt7xCuvjOrfT-wpx6C9/view?usp=sharing
 
+Credit: Great thanks to Đinh Quang Minh - k69-I-CS8 for helping me design game menu
+
+Explain game lore and game idea:
+  You are just a normal forest but one day, the fire suddenly started in the forest. You have no other choice but to become a firefighter to save the forest. Fortunately, You already have the exact tools for that mission, a protective suit that can protect you from the fire for a certain period of time, a water gun connected with a portable water tank
+  In this game, you have to move around to put out the fire while also protecting your house and the water well at the same time
+
 Progression note
 
 11/3/2025:
