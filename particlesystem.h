@@ -36,6 +36,7 @@ class particle_system
     public:
         void add_particle(double X, double Y, double ANGLE);
         void render_particle(SDL_Renderer* renderer, treesystem &forest, bushsystem &bushes, house &House, well &Well);
+        void reset();
 };
 
 #endif
