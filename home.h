@@ -26,6 +26,7 @@ class house
         void spread_flame_house(treesystem &forest, bushsystem &bushes);
         bool lose_health();
         void render_house(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
+        void reset();
 };
 
 class well
@@ -44,6 +45,7 @@ class well
         bool lose_health();
         void render_well(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
         bool near_character();
+        void reset();
 };
 
 #endif
