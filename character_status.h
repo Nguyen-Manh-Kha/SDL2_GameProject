@@ -26,6 +26,7 @@ class status
         void on_fire();
         void render(SDL_Renderer* renderer, SDL_Texture* flame_img[]);
         bool lose();
+        void reset();
 };
 
 #endif
