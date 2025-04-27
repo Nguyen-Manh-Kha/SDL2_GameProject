@@ -611,6 +611,12 @@ bool treesystem::win(int &survive_tree)
     else return false;
 }
 
+void treesystem::reset()
+{
+    tree_system.clear();
+}
+
+
 
 // each bush
 bush::bush(int &num, int _y, int _w, int _h, int _health)
@@ -854,4 +860,9 @@ bool bushsystem::win(int &survive_bush)
         survive_bush = count;    
     }
     else return false;
+}
+
+void bushsystem::reset()
+{
+    bush_system.clear();
 }
