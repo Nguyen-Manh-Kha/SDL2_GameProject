@@ -94,3 +94,9 @@ bool status::lose()
 {
     return health <= 0;
 }
+
+void status::reset()
+{
+    health = 450;
+    water_level = 850;
+}
