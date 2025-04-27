@@ -69,6 +69,7 @@ class treesystem
         int give_tree_near_house_num();
         bool lose();
         bool win(int &survive_tree);
+        void reset();
 };
 
 class bush
@@ -107,6 +108,7 @@ class bushsystem
         int give_bush_near_house_num();
         bool lose();
         bool win(int &survive_bush);
+        void reset();
 };
 
 #endif
