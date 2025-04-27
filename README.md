@@ -1,6 +1,7 @@
 Source code and game explain: https://drive.google.com/file/d/142EJHM-Ginjbtvt7xCuvjOrfT-wpx6C9/view?usp=sharing
 
 Progression note
+
 11/3/2025:
   - Create moving background with 2 background images in a loop ( background.cpp file )
     + The main idea of the code is using a term called " Parallax scrolling "
