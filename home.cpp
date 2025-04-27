@@ -16,7 +16,7 @@ house::house(SDL_Texture* _image)
     rect.y = 101;
     rect.w = 816;
     rect.h = 622;
-    health = 1000;
+    health = 10000;
     image = _image;
 }
 
@@ -124,6 +124,13 @@ void house::render_house(SDL_Renderer* renderer, SDL_Texture* flame_img[])
     }
 }
 
+void house::reset()
+{
+    rect.x = 500;
+    health = 10000;
+    flame_points.clear();
+}
+
 
 
 
@@ -133,7 +140,7 @@ well::well(SDL_Texture* _image)
     rect.y = 547;
     rect.w = 212;
     rect.h = 176;
-    health = 5000;
+    health = 1000;
     image = _image;
 }
 
@@ -202,4 +209,11 @@ void well::render_well(SDL_Renderer* renderer, SDL_Texture* flame_img[])
 bool well::near_character()
 {
     return (rect.x >= 550 && rect.x <= 650);
+}
+
+void well::reset()
+{
+    rect.x = 200;
+    health = 1000;
+    flame_points.clear();
 }
