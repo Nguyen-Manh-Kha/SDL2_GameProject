@@ -119,6 +119,11 @@ void particle_system::render_particle(SDL_Renderer* renderer, treesystem &forest
     }
 }
 
+void particle_system::reset()
+{
+    v.clear();
+}
+
 
 
 
