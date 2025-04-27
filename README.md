@@ -1,11 +1,3 @@
-Explaining game idea:
-  - You are a normal forest ranger but one day, the fire suddenly breaks out in the forest and you have no other choice but to become a fire-fighter to save the forest
-  - You are equipped with a small water tank to keep water and a water gun to put out fire
-    + The water animation will be built by using particle effect
-    + After a certain amount of time of spraying water, you will have to get to a point ( a lake / a well ? ) to recharge
-  - Thanks to the advance of technology, you are also equipped with a protective suit that can protect you from the fire, the suit along with the heavy water tank means that you cannot jump, but you are completely fire-proof, but the trees aren't, so you better save them before they burn down
-  - The trees, the burning effect and how the fire spreads (on progress and will be updated)
-    
 11/3/2025:
   - Create moving background with 2 background images in a loop ( background.cpp file )
     + The main idea of the code is using a term called " Parallax scrolling "
@@ -89,7 +81,15 @@ Explaining game idea:
     + The character now can also catch fire if you stands too close to fire for a certain amount of time
     + When the character is on fire, the fire will eventually disappear after a few seconds thanks to the protective suit, but you will lose some health and some water as a penalty
     - There are totally 4 win-lose scenarios:
-      (1) You only win if you put out all the fire and you save atleast 1 tree/bush
+      (1) You only win if you put out all the fire and you save atleast 30% of the forest, you lose if you save less than 30% of the forest
       (2) You lose if your character'health drops to 0
       (3) You lose if the fire destroys your house or your well
       (4) You lose if the fire destroy all trees and bushes
+
+27/4/2025:
+  - Add the game menu
+    + Design all game menu thanks to the help of Dinh Quang Minh - K69-I-CS8
+    + Tools using for designing:
+      ~ https://www.photopea.com/
+      ~ https://www.fontspace.com/akura-popo-font-f19216
+  - Change some game stats to balance the game
