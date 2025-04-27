@@ -89,7 +89,7 @@
 27/4/2025:
   - Add the game menu
     + Design all game menu thanks to the help of Dinh Quang Minh - K69-I-CS8
-    + Tools using for designing:
+    + Tools used to design:
       ~ https://www.photopea.com/
       ~ https://www.fontspace.com/akura-popo-font-f19216
   - Change some game stats to balance the game
