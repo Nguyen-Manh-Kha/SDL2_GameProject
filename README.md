@@ -7,6 +7,36 @@ Explain game lore and game idea:
   You are just a normal forest ranger but one day, the fire suddenly started in the forest. You have no other choice but to become a firefighter to save the forest. Fortunately, You already have the exact tools for that mission, a protective suit that can protect you from the fire for a certain period of time, a water gun connected with a portable water tank
   In this game, you have to move around to put out the fire while also protecting your house and the water well at the same time
 
+Game's main features:
+  - Movement: LEFT_KEY and RIGHT_KEY only, no jumping (game logic)
+  - Water shooting: (using PARTICLE EFFECT)
+    + Press A_KEY to spray water to put out fire, the water gun points left or right as you move
+    + Press UP_KEY to point water gun upwards
+  - Water refill: stay near water well and hold R_KEY to refill water
+  - World generation: (forest context)
+    + Generate random trees and bushes, each has many different flame points(fire mechanism)
+    + The house and the water well will spawn somewhere in the middle of the forest
+    + The character will spawn at the house as the game starts
+  - Fire mechanism:
+    + When the game starts, there are random flame points in the forest
+    + Then the fire will continue to spread to other points in the forest
+  - House and water well: a fixed point, act as something you have to protect, not just running around and put out fire without worrying about anything else
+  - Character status:
+    + Health bar: The character will not lose health immediately by contacts with fire (the protective suit/ game logic), but when stays near fire for a certain amount of time, the character will eventually catch fire, the fire will disappear after a short amount of time, but your character will lose a portion of health and water as a penalty
+    + Water bar: Decrease as your character sprays water or catches fire, increase as your character refills water near the well
+  - Ending scenarios:
+    + Win: Put out all fire in the forest, save atleast 30% of the forest, successfully protect the house and the water well, your character survives
+    + Lose: More than 70% of the forest is burned down // The fire destroys the house or the water well // Your character does not survive
+
+Code summarize:
+  - background.cpp: scroll background with 2 images using parallax scrolling ( youtube link in progression note below)
+  - function.cpp: basic functions only ( init SDL, SDL_image; load texture; change character sprites)
+  - particlesystem.cpp: water spraying mechanism using particle effect (Learning from lazy fool)
+  - treesystem.cpp: main world generation; contains flame class, tree class, bush class, treesystem class, bushsystem class
+  - home.cpp: create house and water well (object quite similar to tree class)
+  - character_status.cpp: health bar and water bar management
+  - main.cpp: initializing; create window, renderer, load textures, set up world and player, menu and game states management, control key input, run the game with other .cpp file
+
 Progression note
 
 11/3/2025:
