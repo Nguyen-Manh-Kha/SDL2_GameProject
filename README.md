@@ -72,7 +72,7 @@ Progression note
   - Make some small adjustments to other source files to adapt to new features
 
 25/3/2025:
-  - Create a forest system using tile map method
+  - Create a forest system using tile map method( not really, the actual ingame idea is quite different )
     + "Tile map method" learning video: https://youtu.be/DNu8yUsxOnE?si=KisWBHMKdNmM_aYb
     + There is a total of 18 different tree models in "Trees" file
     + Each tree object has its own size, shape and location
